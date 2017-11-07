@@ -1,0 +1,69 @@
+{
+    "formatVersion": 1, 
+    "names": {
+        "type": "Hash", 
+        "url": "names/"
+    }, 
+    "tracks": [
+        {
+            "category": "Reference sequence", 
+            "chunkSize": 20000, 
+            "key": "Reference sequence", 
+            "label": "DNA", 
+            "storeClass": "JBrowse/Store/Sequence/StaticChunked", 
+            "type": "SequenceTrack", 
+            "urlTemplate": "seq/{refseq_dirpath}/{refseq}-"
+        },
+	 {
+            "info": {
+                "SYN": {
+                    "Frameshift": {
+                        "color": "red", 
+                        "description": "Frameshift"
+                    }, 
+                    "INT": {
+                        "color": "orange", 
+                        "description": "Intergenic"
+                    }, 
+                    "NA": {
+                        "color": "lightgray", 
+                        "description": "Not applicable"
+                    }, 
+                    "NS": {
+                        "color": "blue", 
+                        "description": "Non Synonymous"
+                    }, 
+                    "S": {
+                        "color": "green", 
+                        "description": "Synonymous"
+                    }, 
+                    "STOP": {
+                        "color": "red", 
+                        "description": "Stop Codon"
+                    }, 
+                    "ukn": {
+                        "color": "black", 
+                        "description": "Unknown"
+                    }
+                }
+            },
+            "strain_label":"name", 
+            "key": "test_1", 
+            "label": "snp_7828", 
+            "nwk_file": "7828.nwk", 
+            "storeClass": "SNPViewer/Store/SeqFeature/MultiTabix", 
+            "type": "SNPViewer/View/Track/SNPViewCanvas", 
+            "urlTemplate": "7828.vcf.gz"
+        },
+        {
+            "compress": 0, 
+            "key": "Prokka Annotation", 
+            "label": "prokka_gff", 
+            "storeClass": "JBrowse/Store/SeqFeature/NCList", 
+            "trackType": "CanvasFeatures", 
+            "type": "CanvasFeatures", 
+            "urlTemplate": "tracks/prokka_gff/{refseq}/trackData.json"
+        }
+        
+    ]
+}

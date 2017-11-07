@@ -8,7 +8,8 @@ define(
                 this.max_depth=0;
                 this.leaf_number=0;
                 this.tree_root = d3.hierarchy(this._parseNewick(this.nwk));
-                this._calculateX(0,this.tree_root)
+                this._calculateX(0,this.tree_root);
+                this.tree_layout="standard";
                 
             },
             
@@ -27,15 +28,18 @@ define(
                 }
                 
                 this.leaf_y_positions={};
-                
-                this.row_height = Math.round(((this.height/this.leaf_number)-1));
-                this.row_offset = Math.round(this.row_height/2)
+                var factor = height/this.leaf_number;
+                height= this.height=this.leaf_number*factor; 
+               
+                this.row_height = (((this.height/this.leaf_number)));
+                this.row_offset =(this.row_height/2)-1.1;
+            
               
-               var cluster =  d3.cluster()
+                var cluster =  d3.cluster()
                 .size([height,width]);
                 cluster(this.tree_root);
                 this.nodes=this.tree_root.descendants();
-             
+                this.terminal_nodes=[];
                 for (var i in this.nodes){
                     var node = this.nodes[i];
                     node.y= Math.round(node.x);
@@ -45,10 +49,29 @@ define(
                     else{
                         node.x=this.xScale(node.depth);
                     }
-                    if (! node.children){				
+                    if (! node.children){
+                        this.terminal_nodes.push(node)
 			this.leaf_y_positions[node.data.name]=node.y;
                     }
-                }    
+                }
+                this.terminal_nodes.sort(function(a,b){
+                    return a.y-b.y;
+                });
+                var pos=5;
+                for (var i in this.terminal_nodes){
+                    var node=this.terminal_nodes[i];
+                    node.y=pos;
+                    this.leaf_y_positions[node.data.name]=pos;
+                    pos+=this.row_height;
+                    if (i>0){
+                        var prev_node=this.terminal_nodes[i-1];
+                        if (node.parent === prev_node.parent){
+                            node.parent.y = prev_node.y+(this.row_height/2);
+                        }
+                    }
+                    
+                    
+                }
             },
             drawTree:function(context){  
                 context.beginPath();

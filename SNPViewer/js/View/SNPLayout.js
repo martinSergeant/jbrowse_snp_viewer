@@ -12,7 +12,7 @@ define(
 return declare( GranularRectLayout,
 {
     constructor: function(args) {
-        this.height=args.tree.height;
+        this.height=args.tree.height+args.tree.row_height;
         this.pitchY=1;
         this.tree = args.tree;
     },
@@ -38,12 +38,13 @@ return declare( GranularRectLayout,
       
 
         var midX = Math.floor((pLeft+pRight)/2);
-        var rectangle = { id: id, l: pLeft, r: pRight, mX: midX, h: this.tree.row_height };
+        var rectangle = { id: id, l: pLeft, r: pRight, mX: midX, h: Math.ceil((this.tree.row_offset*2)+1) };
         if( data )
             rectangle.data = data;
 
      
-	var top = this.tree.leaf_y_positions[data.data.name]-this.tree.row_offset;
+	var top = Math.floor(this.tree.leaf_y_positions[data.data.tree_id]-this.tree.row_offset);
+        
         rectangle.top = top;
         this._addRectToBitmap( rectangle, data );
         this.rectangles[id] = rectangle;
@@ -51,7 +52,7 @@ return declare( GranularRectLayout,
        
     },
      getTotalHeight: function() {
-        return this.height;
+        return this.tree.height+this.tree.row_height;;
     }
     
 });

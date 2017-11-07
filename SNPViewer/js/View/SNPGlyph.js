@@ -16,22 +16,29 @@ return declare(Box,{
                    "A":"green",
                    "T":"red",
                    "G":"black",
-                   "C":"blue"
-                       
+                   "C":"blue",
+                   "<DEL>":"lightgray"                       
                };
+            
         },
      
     
 
     _getFeatureHeight: function( viewArgs, feature ) {
-        return this.track.tree.row_height;
-    },
+        var h= Math.floor((this.track.tree.row_offset*2)+1);
+   
+        if (h<1){
+            h=1;
+        }
+        return h;
+            },
     
      renderBox: function( context, viewInfo, feature, top, overallHeight, parentFeature, style ) {
         var left  = viewInfo.block.bpToX( feature.get('start') );
         var width = viewInfo.block.bpToX( feature.get('end') ) - left;
         //left = Math.round( left );
         //width = Math.round( width );
+      
 
         style = style || lang.hitch( this, 'getStyle' );
 
@@ -39,17 +46,27 @@ return declare(Box,{
         if( ! height )
             return;
         if( height != overallHeight )
-            top += Math.round( (overallHeight - height)/2 );
+            top +=  (overallHeight - height)/2 ;
 
         // background
-        
         var bgcolor = this.base_to_color[feature.data.base];
+        if (feature.data.mut_type!=="SUB"){
+            if (feature.data.base !=="<DEL>"){
+                bgcolor=(feature.data.mut_type==='DEL')?"purple":"brown";
+            }
+        }
+        if (this.track.config.color_by!=="base"){
+            var t = this.track.config.color_by;
+            
+            bgcolor = this.track.config.info[t][feature.data[t]].color;
+        }
+       
         if( bgcolor ) {
             context.fillStyle = bgcolor;
             context.fillRect( left, top, Math.max(2,width), height );
         }
         else {
-            context.clearRect( left, top, Math.max(1,width), height );
+            context.clearRect( left, top, Math.max(2,width), height );
         }
 
         // foreground border
