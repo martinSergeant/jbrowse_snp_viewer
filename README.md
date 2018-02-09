@@ -1,12 +1,12 @@
 # jbrowse_snp_viewer
 
 ## Description
-A plugin for the genome browser Jbrowse. Displays  a tree (nwk file to be specified in the track data) and SNPd  (from a gzipped VCF file plus index )
+A plugin for the genome browser Jbrowse. Displays  a tree (nwk file to be specified in the track data) and SNPs/rearrangements  (from a gzipped VCF file plus index )
 
 ![Screen Shot](test_data/screen_shot.png)
 
 ## Installation
-Place the SNPViewer folder in the plugins director of your JBrowse installation and add it to your jbrowse_conf.json
+Place the SNPViewer folder in the plugins directory of your JBrowse installation and register it in your jbrowse_conf.json
 ```
 "plugins":[....,"SNPViewer"]
 ```
