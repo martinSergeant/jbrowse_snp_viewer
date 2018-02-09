@@ -54,14 +54,19 @@ define([
                     }
                     self.config.tree_height=height;
                 }
-                self.tree.calculateTree(self.config.tree_height,200,"standard");      
+                self.tree.calculateTree(self.config.tree_height,200,self.config.tree_type);      
             });
+            if (this.store){
+                this.store.filters=this.config.filters;
+            }
             
         },
          _defaultConfig: function() {
             return Util.deepUpdate(lang.clone(this.inherited(arguments)), {
                 tree_height:0,
-                color_by:"base"
+                color_by:"base",
+                tree_type:"standard",
+                filters:{}
             });
         },
         
@@ -71,16 +76,37 @@ define([
             options.push({
                 label: 'SNP Options',
                 onClick: function() {
+                    
+                    var filters=[];
+                    for (var name in track.config.allowed_filters){
+                        var types = track.config.allowed_filters[name];
+                        for (var i in types){
+                            var type = types[i];
+                            var filter = [name,track.store.header.info[name].description[0],type];
+                            if (track.config.filters[name] && track.config.filters[name][type]){
+                                filter.push(true);
+                            }
+                            else{
+                                filter.push(false)
+                            }
+                            filters.push(filter);
+                        }
+                    }
                     new SNPDialog({
+                        filters:filters,
                         tree:track.tree,
                         color_by:track.config.color_by,
-                        setCallback: function(tree_height,color_by) {
-                            track.tree.calculateTree(tree_height,200,"standard");
+                        setCallback: function(tree_height,color_by,tree_type,filters) {
+                            track.config.tree_height=tree_height;
+                            track.config.color_by=color_by;
+                            track.config.tree_type=tree_type;
+                            track.config.filters=filters;
+                            track.store.filters=filters;
+                            track.tree.calculateTree(tree_height,200,tree_type);
                             track.treeCanvas.height=track.tree.height;
                             var ctx = track.treeCanvas.getContext("2d");
                             track.tree.drawTree(ctx);
-                            track.config.tree_height=tree_height;
-                            track.config.color_by=color_by;
+                          
                             track.browser.publish('/jbrowse/v1/v/tracks/replace', [track.config]);
                             //track.layout.rectangles={};   
                            // track.redraw();

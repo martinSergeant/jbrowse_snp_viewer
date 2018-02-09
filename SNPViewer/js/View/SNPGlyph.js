@@ -17,7 +17,8 @@ return declare(Box,{
                    "T":"red",
                    "G":"black",
                    "C":"blue",
-                   "<DEL>":"lightgray"                       
+                   "<DEL>":"lightgray",
+                   "N":"lightgray"
                };
             
         },
@@ -45,7 +46,7 @@ return declare(Box,{
         var height = this._getFeatureHeight( viewInfo, feature );
         if( ! height )
             return;
-        if( height != overallHeight )
+        if( height !== overallHeight )
             top +=  (overallHeight - height)/2 ;
 
         // background
@@ -58,7 +59,7 @@ return declare(Box,{
         if (this.track.config.color_by!=="base"){
             var t = this.track.config.color_by;
             
-            bgcolor = this.track.config.info[t][feature.data[t]].color;
+            bgcolor = this.track.config.info[t][feature.data[t]];
         }
        
         if( bgcolor ) {

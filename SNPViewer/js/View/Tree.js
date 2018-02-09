@@ -14,13 +14,14 @@ define(
             },
             
             calculateTree:function(height,width,layout){
-                if (!layout){
-                    layout="standard";
+                if (layout){
+                    this.tree_layout=layout
                 }
+               
                 this.height=height;
                 this.width=width;
                
-                if (layout === 'standard'){
+                if (this.tree_layout === 'standard'){
                     this.xScale = d3.scaleLinear().domain([0,this.max_x]).range([0,this.width]);
                 }
                 else{
@@ -50,7 +51,7 @@ define(
                         node.x=this.xScale(node.depth);
                     }
                     if (! node.children){
-                        this.terminal_nodes.push(node)
+                        this.terminal_nodes.push(node);
 			this.leaf_y_positions[node.data.name]=node.y;
                     }
                 }

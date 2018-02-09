@@ -20,9 +20,9 @@ function(
     return declare(VCFTabix, {
       
     constructor: function( args ) {
-         
+         var config= this.config;
         //this is a hack
-        //the only way i could find to overide a met
+        //the only way i could find to overide the method
         this.indexedData.parseLine= function(line) {
             var fields = line.split( "\t" );
             fields[fields.length-1] = fields[fields.length-1].replace(/\n$/,''); // trim off the newline
@@ -31,7 +31,15 @@ function(
             if (fields[4]==='<DEL>'){
                 len=20000;
             }
-            //indels have base before
+            var arr = fields[7].split(";");
+            var info={};
+            for (var i  in arr){
+                var arr2=arr[i].split("=");
+                info[arr2[0]]=arr2[1];
+            }
+         
+            
+            //indels have base before therefore actual length is 1 less
             if (len>1){
                 len-=1;
                 start+=1;
@@ -43,7 +51,8 @@ function(
             _regularizedRef: this.browser.regularizeReferenceName( fields[this.index.columnNumbers.ref-1] ),
             start: start,
             end:   end,
-            fields: fields
+            fields: fields,
+            info:info
         };
         return item;
     };
@@ -59,6 +68,15 @@ function(
                 query.start,
                 query.end,
                 function( line ) {
+                    if (thisB.filters){
+                        for (var i in thisB.filters){
+                            for (var ii in thisB.filters[i]){
+                                if (thisB.filters[i][line.info[i]]){
+                            return;
+                            }
+                            }
+                        }
+                    }
                         var alts = line.fields[4].split(",");
                         var ref_base=line.fields[3];
                         var r_len= ref_base.length;
@@ -77,15 +95,7 @@ function(
                                 mut_type="DEL";
                             }
                         }
-                        var arr =line.fields[7].split(";");
-                       
-                        
-                        var i_types={};
-                        for (var i in arr){
-                            var arr2=arr[i].split("=");
-                        
-                            i_types[arr2[0]]=arr2[1];
-                        }
+                    
 			for (var a =9;a<line.fields.length;a++){
                             var gt= parseInt(line.fields[a]);
                             if (gt!==0){
@@ -116,8 +126,8 @@ function(
                                         uniqueID: sample+"_"+line.fields[2]
                                         
 				}
-                                for (var id in thisB.info_types){
-                                    data[id]=i_types[id]
+                                for (var id in line.info){
+                                    data[id]=line.info[id];
                                 }
                                
                                
